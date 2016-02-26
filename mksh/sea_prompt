@@ -1,8 +1,11 @@
 
 # random color prompt
 
+typeset code_delim
+code_delim=$(echo -n "\a\r")
+
 __set_color() {
-	echo -n "\e[$1;2;$2;$3;${4}m"
+	echo -n "\a\e[$1;2;$2;$3;${4}m\a"
 }
 
 __random_color() {
@@ -20,7 +23,7 @@ __random_color() {
 	__set_color 48 $red $iblue $igreen
 }
 __reset_attr() {
-	echo -n "\e[0m"
+	echo -n "\a\e[0m\a"
 }
 
-PS1='$(__random_color)$PWD$(__reset_attr) '
+PS1='$code_delim$(__random_color)$PWD$(__reset_attr) '
