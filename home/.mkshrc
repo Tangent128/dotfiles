@@ -1,0 +1,5 @@
+
+# mksh startup file
+
+. ~/.dotfiles/mksh/sea_prompt
+

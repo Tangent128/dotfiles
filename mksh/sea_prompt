@@ -1,0 +1,26 @@
+
+# random color prompt
+
+__set_color() {
+	echo -n "\e[$1;2;$2;$3;${4}m"
+}
+
+__random_color() {
+	typeset red green blue
+	red=$((RANDOM % 48 + 16))
+	green=$((RANDOM % 48 + 16))
+	blue=$((RANDOM % 48 + 64))
+
+	typeset ired igreen iblue
+	ired=$((255-red))
+	igreen=$((255-green))
+	iblue=$((255-blue))
+
+	__set_color 38 $ired $igreen $blue
+	__set_color 48 $red $iblue $igreen
+}
+__reset_attr() {
+	echo -n "\e[0m"
+}
+
+PS1='$(__random_color)$PWD$(__reset_attr) '
