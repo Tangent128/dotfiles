@@ -6,4 +6,4 @@ type lua > /dev/null && LUA=lua
 type lua53 > /dev/null && LUA=lua53
 type lua5.3 > /dev/null && LUA=lua5.3
 
-PS1="\$($LUA ~/.dotfiles/lua/gradient_prompt.lua \$PWD \$? $(tput cols))"
+PS1="\$($LUA ~/.dotfiles/lua/gradient_prompt.lua \$PWD \$? \$(tput cols))"

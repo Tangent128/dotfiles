@@ -1,15 +1,6 @@
 
 -- prompt generation script meant for st+mksh
 
--- colors
-
-local TEXT = {255,192,128}
-
-local START_BG = {128, 128, 128}
-local PWD_BG = {0, 128, 255}
-local SPACE_BG = {192, 192, 192}
-local END_BG = {128, 0, 196}
-
 -- grab args
 
 local pwd, status, cols = ...
@@ -18,6 +9,27 @@ local pwd, status, cols = ...
 local function prompt()
 	
 	local cols = math.tointeger(cols)
+	local pos = 0
+	
+	-- color functions
+	
+	local blend
+	
+	local function t()
+		return pos/(cols-1)
+	end
+
+	local function wave()
+		return math.sqrt( math.sin(t() * math.pi) )
+	end
+	
+	local function background()
+		return blend({0,0,0}, {128,128,128}, wave())
+	end
+	
+	local function foreground()
+		return {255,255,0}
+	end
 	
 	-- queue output
 	local buffer = {}
@@ -31,7 +43,7 @@ local function prompt()
 
 	-- helper funcs
 
-	local function blend(a, b, t)
+	function blend(a, b, t)
 		local it = 1 - t
 		return {
 			math.ceil(a[1]*it + b[1]*t),
@@ -47,36 +59,33 @@ local function prompt()
 	end
 
 	local function len(str)
-		return utf8.len(str) or #str
-	end
-
-	-- assemble prompt
-
-	local pos
-	local pwd_start_bg = START_BG
-	local pwd_end_bg = PWD_BG
-	local pwd_len = len(pwd)
-
-	local left_len = pwd_len
-
-	local space_start_bg = SPACE_BG
-	local space_end_bg = END_BG
-	local space_len = cols - left_len
-
-	buffer[0] = quote_pattern
-
-	pos = 0
-	for char in pwd:gmatch(utf8.charpattern) do
-		color_putchar(char, TEXT, blend(pwd_start_bg, pwd_end_bg, pos/pwd_len))
-		pos = pos + 1
+		return utf8.len(str)
 	end
 	
-	--color_putchar("▒", pwd_end_bg, space_start_bg)
-
-	for t = 1, space_len do
-		color_putchar(" ", TEXT, blend(space_start_bg, space_end_bg, t/space_len))
+	local function write(str, foreground, background)
+		for char in str:gmatch(utf8.charpattern) do
+			color_putchar(char, foreground(), background())
+			pos = pos + 1
+		end
 	end
+	
+	local function pad(count, foreground, background)
+		for t = 1, count do
+			color_putchar(" ", foreground(), background())
+			pos = pos + 1
+		end
+	end
+	
+	-- assemble prompt
 
+	local clip_pwd = pwd:sub(utf8.offset(pwd, -cols) or 1)
+	local pwd_len = len(clip_pwd)
+	
+	buffer[0] = quote_pattern
+	pad((cols - pwd_len) >> 1, foreground, background)
+	write(clip_pwd, foreground, background)
+	pad(cols - pos, foreground, background)
+	
 	buffer[#buffer + 1] = reset_pattern
 	buffer[#buffer + 1] = "\n$"
 
