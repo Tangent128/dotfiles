@@ -1,5 +1,6 @@
 
 # mksh startup file
 
-. ~/.dotfiles/mksh/sea_prompt
+. ~/.dotfiles/mksh/gradient_prompt
 
+. ~/.dotfiles/sh/aliases
