@@ -1,6 +1,9 @@
 
 # mksh startup file
 
+# safe default prompt
+PS1='$PWD ❱ '
+
 . ~/.dotfiles/mksh/gradient_prompt
 
 . ~/.dotfiles/sh/aliases

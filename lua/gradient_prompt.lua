@@ -87,7 +87,6 @@ local function prompt()
 	pad(cols - pos, foreground, background)
 	
 	buffer[#buffer + 1] = reset_pattern
-	buffer[#buffer + 1] = "\n$"
 
 	-- print prompt
 
