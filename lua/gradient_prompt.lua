@@ -3,7 +3,7 @@
 
 -- grab args
 
-local pwd, status, cols = ...
+local pwd, status, shell_id, cols = ...
 
 -- safety wrapper
 local function prompt()
@@ -13,6 +13,10 @@ local function prompt()
 	
 	-- color functions
 	
+	math.randomseed(shell_id)
+	math.random() math.random() math.random()
+	local color_root = math.random()
+	
 	local blend
 	
 	local function t()
@@ -20,15 +24,25 @@ local function prompt()
 	end
 
 	local function wave()
-		return math.sqrt( math.sin(t() * math.pi) )
+		return math.sin(t() * math.pi)
+	end
+	
+	local function sine(t)
+		local value = (math.sin(t * math.pi * 2) + 1) / 2
+		return math.ceil(value * 255)
+	end
+	
+	local function sinebow(t)
+		return {sine(t + 1/3), sine(t + 0/3), sine(t + 2/3)}
 	end
 	
 	local function background()
-		return blend({0,0,0}, {128,128,128}, wave())
+		--local hue = blend(sinebow(color_root + 0.4), sinebow(color_root + 0.6), wave())
+		return blend({0,0,0}, sinebow(color_root + 0.4), wave()/3 + 1/16)
 	end
-	
+
 	local function foreground()
-		return {255,255,0}
+		return sinebow(color_root)
 	end
 	
 	-- queue output
