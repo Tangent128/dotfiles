@@ -8,7 +8,7 @@ type lua5.3 > /dev/null && LUA=lua5.3
 
 LINE_2=$(echo -n "\n❱")
 
-shell_id=$RANDOM
+shell_id=$$
 
 case "$TERM" in
 	st-*)

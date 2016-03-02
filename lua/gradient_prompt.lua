@@ -14,8 +14,11 @@ local function prompt()
 	-- color functions
 	
 	math.randomseed(shell_id)
+	-- throw away a few random numbers for better mixing
 	math.random() math.random() math.random()
-	local color_root = math.random()
+	
+	-- limit text color to more readable part of spectrum
+	local color_root = math.random() --* 2/3 + 1/3
 	
 	local blend
 	
@@ -38,11 +41,12 @@ local function prompt()
 	
 	local function background()
 		--local hue = blend(sinebow(color_root + 0.4), sinebow(color_root + 0.6), wave())
-		return blend({0,0,0}, sinebow(color_root + 0.4), wave()/3 + 1/16)
+		return blend({0,0,0}, sinebow(color_root), wave()/3 + 1/16)
+		--return blend({0,0,0}, sinebow(t()), wave() + 0/16)
 	end
 
 	local function foreground()
-		return sinebow(color_root)
+		return sinebow(color_root + t()/2)
 	end
 	
 	-- queue output
@@ -53,7 +57,7 @@ local function prompt()
 	local reset_pattern = "\a\x1b[0m\a"
 
 	-- pattern to indicate using BEL to quote escape sequences in mksh
-	local quote_pattern = "\a\r"
+	local quote_pattern = "\a\r\a\x1b[1m\a"
 
 	-- helper funcs
 
@@ -95,7 +99,7 @@ local function prompt()
 	local clip_pwd = pwd:sub(utf8.offset(pwd, -cols) or 1)
 	local pwd_len = len(clip_pwd)
 	
-	buffer[0] = quote_pattern
+	buffer[1] = quote_pattern
 	pad((cols - pwd_len) >> 1, foreground, background)
 	write(clip_pwd, foreground, background)
 	pad(cols - pos, foreground, background)
