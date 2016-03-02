@@ -42,11 +42,13 @@ local function prompt()
 	local function background()
 		--local hue = blend(sinebow(color_root + 0.4), sinebow(color_root + 0.6), wave())
 		return blend({0,0,0}, sinebow(color_root), wave()/3 + 1/16)
-		--return blend({0,0,0}, sinebow(t()), wave() + 0/16)
+		--return sinebow(color_root + t())
 	end
 
 	local function foreground()
-		return sinebow(color_root + t()/2)
+		--return sinebow(color_root + t()/2)
+		--return {255,255,255}
+		return blend({255,255,255}, sinebow(color_root + t() + 0.5), wave()/2)
 	end
 	
 	-- queue output
