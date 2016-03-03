@@ -1,5 +1,5 @@
 
-typeset LUA LINE_2 colors shell_id
+typeset LUA LINE_2 hostinfo shell_id
 
 LUA=:
 type lua > /dev/null && LUA=lua
@@ -9,12 +9,13 @@ type lua5.3 > /dev/null && LUA=lua5.3
 
 LINE_2=$(echo -n "\n❱")
 
-colors='host_red="$ps_host_red" host_green="$ps_host_green" host_blue="$ps_host_blue"'
+hostinfo='host="$ps_host" host_red="$ps_host_red" host_green="$ps_host_green" host_blue="$ps_host_blue"'
+test "$SSH_CONNECTION" && ps_host=$(hostname)
 
 shell_id=$$
 
 case "$TERM" in
 	st-*|*)
-		PS1="\$($LUA ~/.dotfiles/lua/gradient_prompt.lua pwd=\"\$PWD\" seed=$shell_id cols=\$(tput cols) $colors)$LINE_2"
+		PS1="\$($LUA ~/.dotfiles/lua/gradient_prompt.lua pwd=\"\$PWD\" seed=$shell_id cols=\$(tput cols) $hostinfo)$LINE_2"
 		;;
 esac

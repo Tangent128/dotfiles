@@ -11,6 +11,7 @@ local opts = {
 	host_red = 0,
 	host_green = 0,
 	host_blue = 0,
+	host = ""
 }
 
 for i, arg in pairs{...} do
@@ -55,17 +56,18 @@ local function prompt()
 		return {sine(t + 1/3), sine(t + 0/3), sine(t + 2/3)}
 	end
 	
+	local host_color = {
+		math.tointeger(opts.host_red),
+		math.tointeger(opts.host_green),
+		math.tointeger(opts.host_blue)
+	}
+	
 	local function background()
 		local fade = wave()/3 + 1/16
 		local color = sinebow(color_root)
 		local margin_color = {0,0,0}
 
 		if t() < 0.5 and opts.host_red then
-			local host_color = {
-				math.tointeger(opts.host_red),
-				math.tointeger(opts.host_green),
-				math.tointeger(opts.host_blue)
-			}
 			color = blend(host_color, color, t() * 2)
 			fade = 1/3 + 1/16
 		end
@@ -75,6 +77,10 @@ local function prompt()
 
 	local function foreground()
 		return blend({255,255,255}, sinebow(color_root + t() + 0.5), wave()/2)
+	end
+	
+	local function host_foreground()
+		return blend({255,255,255}, host_color, 1/2)
 	end
 	
 	-- queue output
@@ -123,17 +129,26 @@ local function prompt()
 	end
 	
 	-- assemble prompt
-
-	local clip_pwd = opts.pwd:sub(utf8.offset(opts.pwd, -cols) or 1)
+	
+	local space = cols
+	
+	local clip_pwd = opts.pwd:sub(utf8.offset(opts.pwd, -space) or 1)
 	local pwd_len = len(clip_pwd)
+	space = space - pwd_len
+	
+	local clip_host = space > 0 and opts.host:sub(utf8.offset(opts.host, -space) or 1) or ""
+	local host_len = len(clip_host)
+	space = space - host_len
 	
 	buffer[1] = quote_pattern
-	pad((cols - pwd_len) >> 1, foreground, background)
+	
+	write(clip_host, host_foreground, background)
+	
+	pad(space // 2, foreground, background)
 	write(clip_pwd, foreground, background)
 	pad(cols - pos, foreground, background)
 	
 	buffer[#buffer + 1] = reset_pattern
-
 	-- print prompt
 
 	local output = table.concat(buffer)
