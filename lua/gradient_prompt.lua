@@ -3,17 +3,29 @@
 
 -- grab args
 
-local pwd, status, shell_id, cols = ...
+local opts = {
+	pwd = "",
+	seed = "0",
+	cols = "40",
+	status = "0"
+}
+
+for i, arg in pairs{...} do
+	local key, value = arg:match "^([^=]*)=(.*)"
+	if key then
+		opts[key] = value
+	end
+end
 
 -- safety wrapper
 local function prompt()
 	
-	local cols = math.tointeger(cols)
+	local cols = math.tointeger(opts.cols)
 	local pos = 0
 	
 	-- color functions
 	
-	math.randomseed(shell_id)
+	math.randomseed(math.tointeger(opts.seed))
 	-- throw away a few random numbers for better mixing
 	math.random() math.random() math.random()
 	
@@ -98,7 +110,7 @@ local function prompt()
 	
 	-- assemble prompt
 
-	local clip_pwd = pwd:sub(utf8.offset(pwd, -cols) or 1)
+	local clip_pwd = opts.pwd:sub(utf8.offset(opts.pwd, -cols) or 1)
 	local pwd_len = len(clip_pwd)
 	
 	buffer[1] = quote_pattern
@@ -117,10 +129,10 @@ end
 
 -- backup prompt for old Lua versions or bad inputs
 local function backup_prompt()
-	if status == 0 then
-		io.write(pwd.." ▙ ")
+	if opts.status == "0" then
+		io.write(opts.pwd.." ▙ ")
 	else
-		io.write(pwd.." "..status.." ")
+		io.write(opts.pwd.." "..opts.status.." ")
 	end
 	return
 end
