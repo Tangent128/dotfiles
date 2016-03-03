@@ -7,3 +7,6 @@ PS1='$PWD ❱ '
 . ~/.dotfiles/mksh/gradient_prompt
 
 . ~/.dotfiles/sh/aliases
+
+# load any local config
+test -f ~/.mkshrc.local && . ~/.mkshrc.local

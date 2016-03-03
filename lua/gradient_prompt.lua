@@ -7,11 +7,14 @@ local opts = {
 	pwd = "",
 	seed = "0",
 	cols = "40",
-	status = "0"
+	status = "0",
+	host_red = 0,
+	host_green = 0,
+	host_blue = 0,
 }
 
 for i, arg in pairs{...} do
-	local key, value = arg:match "^([^=]*)=(.*)"
+	local key, value = arg:match "^([^=]*)=(.+)"
 	if key then
 		opts[key] = value
 	end
@@ -33,6 +36,7 @@ local function prompt()
 	local color_root = math.random() --* 2/3 + 1/3
 	
 	local blend
+	local ceil = math.ceil
 	
 	local function t()
 		return pos/(cols-1)
@@ -44,7 +48,7 @@ local function prompt()
 	
 	local function sine(t)
 		local value = (math.sin(t * math.pi * 2) + 1) / 2
-		return math.ceil(value * 255)
+		return ceil(value * 255)
 	end
 	
 	local function sinebow(t)
@@ -52,14 +56,24 @@ local function prompt()
 	end
 	
 	local function background()
-		--local hue = blend(sinebow(color_root + 0.4), sinebow(color_root + 0.6), wave())
-		return blend({0,0,0}, sinebow(color_root), wave()/3 + 1/16)
-		--return sinebow(color_root + t())
+		local fade = wave()/3 + 1/16
+		local color = sinebow(color_root)
+		local margin_color = {0,0,0}
+
+		if t() < 0.5 and opts.host_red then
+			local host_color = {
+				math.tointeger(opts.host_red),
+				math.tointeger(opts.host_green),
+				math.tointeger(opts.host_blue)
+			}
+			color = blend(host_color, color, t() * 2)
+			fade = 1/3 + 1/16
+		end
+
+		return blend(margin_color, color, fade)
 	end
 
 	local function foreground()
-		--return sinebow(color_root + t()/2)
-		--return {255,255,255}
 		return blend({255,255,255}, sinebow(color_root + t() + 0.5), wave()/2)
 	end
 	
@@ -78,9 +92,9 @@ local function prompt()
 	function blend(a, b, t)
 		local it = 1 - t
 		return {
-			math.ceil(a[1]*it + b[1]*t),
-			math.ceil(a[2]*it + b[2]*t),
-			math.ceil(a[3]*it + b[3]*t),
+			ceil(a[1]*it + b[1]*t),
+			ceil(a[2]*it + b[2]*t),
+			ceil(a[3]*it + b[3]*t),
 		}
 	end
 
