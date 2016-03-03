@@ -11,6 +11,7 @@ LINE_2=$(echo -n "\n❱")
 shell_id=$$
 
 case "$TERM" in
-	st-*)
+	st-*|*)
 		PS1="\$($LUA ~/.dotfiles/lua/gradient_prompt.lua \$PWD \$? $shell_id \$(tput cols))$LINE_2"
+		;;
 esac
