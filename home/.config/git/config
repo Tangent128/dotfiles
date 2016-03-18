@@ -2,12 +2,10 @@
 	email = Tangent128@gmail.com
 	name = Tangent 128
 [push]
-#	default = simple
 	default = current
 [alias]
 	deindex = rm --cached --ignore-unmatch --
 	id = log -n 1
-	qlog = log --graph --oneline -n 20
 	map = log -n 15 --oneline --decorate --graph
 [diff]
 	tool = meld
