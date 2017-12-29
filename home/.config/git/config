@@ -12,3 +12,8 @@
 	guitool = meld
 [merge]
 	tool = meld
+	ff = false
+[core]
+	editor = nano
+[pull]
+	ff = only
