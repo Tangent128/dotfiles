@@ -37,7 +37,9 @@ local function prompt()
 	local color_root = math.random() --* 2/3 + 1/3
 	
 	local blend
-	local ceil = math.ceil
+	local function bound(n)
+		return math.min(math.ceil(n), 255)
+	end
 	
 	local function t()
 		return pos/(cols-1)
@@ -49,7 +51,7 @@ local function prompt()
 	
 	local function sine(t)
 		local value = (math.sin(t * math.pi * 2) + 1) / 2
-		return ceil(value * 255)
+		return value * 255
 	end
 	
 	local function sinebow(t)
@@ -98,9 +100,9 @@ local function prompt()
 	function blend(a, b, t)
 		local it = 1 - t
 		return {
-			ceil(a[1]*it + b[1]*t),
-			ceil(a[2]*it + b[2]*t),
-			ceil(a[3]*it + b[3]*t),
+			bound(a[1]*it + b[1]*t),
+			bound(a[2]*it + b[2]*t),
+			bound(a[3]*it + b[3]*t),
 		}
 	end
 
